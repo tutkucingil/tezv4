@@ -126,12 +126,12 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/change_email_button"
+            android:id="@+id/upload_image"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/change_email"
+            android:text="@string/btn_upload_image"
             android:textStyle="bold" />
 
         <Button
