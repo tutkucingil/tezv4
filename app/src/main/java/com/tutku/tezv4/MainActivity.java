@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
     private static final int GALLERY_INTENT=2;
     private ProgressDialog mProgressDialog;
+    private String mUserId;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mProgressDialog = new ProgressDialog(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
                     // launch login activity
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();
+                }
+                else {
+                    mUserId = user.getUid();
                 }
             }
         };
@@ -281,10 +289,13 @@ public class MainActivity extends AppCompatActivity {
             mProgressDialog.setMessage("Uploading ...");
             mProgressDialog.show();
             Uri uri = data.getData();
-            StorageReference filepath = mStorageRef.child(uri.getLastPathSegment());
+            final StorageReference filepath = mStorageRef.child(uri.getLastPathSegment());
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    mUserId = user.getUid();
+                    mDatabase.child("users").child(mUserId).child("photo_id").setValue(filepath.toString());
                     Toast.makeText(MainActivity.this, "Upload Done ..." , Toast.LENGTH_LONG).show();
                     mProgressDialog.dismiss();
                 }
