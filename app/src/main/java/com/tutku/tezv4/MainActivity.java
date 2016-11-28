@@ -13,6 +13,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -27,7 +33,7 @@ import com.google.firebase.storage.UploadTask;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnChangePassword, btnSendResetEmail, btnRemoveUser,
-            changeEmail, changePassword, sendEmail, remove, signOut ,btnUpload;
+            changeEmail, changePassword, sendEmail, remove, signOut ,btnUpload,btn_map;
 
     private EditText oldEmail, newEmail, password, newPassword;
     private ProgressBar progressBar;
@@ -38,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private String mUserId;
     private DatabaseReference mDatabase;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,18 @@ public class MainActivity extends AppCompatActivity {
 
         //get current user
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext()).enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+            @Override
+            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                Toast.makeText(MainActivity.this , "ERROR",Toast.LENGTH_LONG).show();
+            }
+        }).addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
 
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -84,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         remove = (Button) findViewById(R.id.remove);
         signOut = (Button) findViewById(R.id.sign_out);
         btnUpload = (Button) findViewById(R.id.upload_image);
+        btn_map=(Button) findViewById(R.id.gomap);
 
         oldEmail = (EditText) findViewById(R.id.old_email);
         newEmail = (EditText) findViewById(R.id.new_email);
@@ -104,7 +124,14 @@ public class MainActivity extends AppCompatActivity {
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
+btn_map.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        startActivity(new Intent(MainActivity.this, MapsActivity.class));
+        finish();
 
+    }
+});
 
         changeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -289,6 +316,8 @@ public class MainActivity extends AppCompatActivity {
             mProgressDialog.setMessage("Uploading ...");
             mProgressDialog.show();
             Uri uri = data.getData();
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(signInIntent);
             final StorageReference filepath = mStorageRef.child(uri.getLastPathSegment());
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
