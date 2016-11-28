@@ -1,5 +1,5 @@
 package com.tutku.tezv4;
-
+//suprise izi pizi
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
+//sex on the beach
 public class MainActivity extends AppCompatActivity {
 
     private Button btnChangePassword, btnSendResetEmail, btnRemoveUser,
