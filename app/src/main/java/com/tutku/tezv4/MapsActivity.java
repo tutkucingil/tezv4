@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements LocationListener {
-
+//YUSUF BRANCHI
     private GoogleMap mMap;
     boolean isGPSEnabled = false;
     boolean isNetworkEnabled = false;
