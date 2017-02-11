@@ -1,5 +1,5 @@
 ﻿package com.tutku.tezv4;
-
+// TUTKUNUN YAPTIGI !!!
 import android.support.v4.app.FragmentActivity;
 import android.location.Location;
 import android.location.LocationListener;
