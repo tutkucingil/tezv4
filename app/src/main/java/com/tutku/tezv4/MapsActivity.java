@@ -1,4 +1,4 @@
-package com.tutku.tezv4;
+﻿package com.tutku.tezv4;
 
 import android.support.v4.app.FragmentActivity;
 import android.location.Location;
